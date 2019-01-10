@@ -1,31 +1,26 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
-
-
+import random
+import string
+import httplib2
+import json
+import requests
 from sqlalchemy import create_engine, asc, func
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Catalog, CatalogItem, User
-
 from flask import session as login_session
-import random
-import string
-
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
-import httplib2
-import json
 from flask import make_response
-import requests
-
+from flask import Flask, render_template, request
+from flask import redirect, jsonify, url_for, flash
 app = Flask(__name__)
-
-
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "catalog catalog Application"
 
 
 # Connect to Database and create database session
-engine = create_engine('sqlite:///catalogcatalogwithusers.db',connect_args={'check_same_thread':False})
+engine = create_engine('sqlite:///catalogcatalogwithusers.db',
+                        connect_args={'check_same_thread': False})
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -119,8 +114,6 @@ def gconnect():
     if not user_id:
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
-
-
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -150,11 +143,8 @@ def getUserInfo(user_id):
 
 
 def getUserID(email):
-    try:
-        user = session.query(User).filter_by(email=email).one()
-        return user.id
-    except:
-        return None
+    user = session.query(User).filter_by(email=email).one()
+    return user.id
 
 
 # DISCONNECT - Revoke a current user's token and reset their login_session
@@ -178,7 +168,7 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-        flash('Logged out successfully!' )
+        flash('Logged out successfully!')
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return redirect(url_for('showcatalogs'))
@@ -189,7 +179,7 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
- 
+
 # JSON APIs to view catalog Information
 @app.route('/catalog/<int:catalog_id>/catalog/JSON')
 def catalogcatalogJSON(catalog_id):
@@ -201,32 +191,36 @@ def catalogcatalogJSON(catalog_id):
 
 @app.route('/catalog/<int:catalog_id>/catalog/<int:catalog_menu_id>/JSON')
 def catalogItemJSON(catalog_id, catalog_menu_id):
-    catalog_Item = session.query(CatalogItem).filter_by(id=catalog_menu_id).one()
+    catalog_Item = session.query(
+        CatalogItem).filter_by(id=catalog_menu_id).one()
     return jsonify(Catalog_Item=catalog_Item.serialize)
 
 
 @app.route('/catalog/JSON')
 def catalogsJSON():
     catalogs = session.query(Catalog).all()
-    return jsonify(catalogs=[r.serialize for r in catalogs]) 
+    return jsonify(catalogs=[r.serialize for r in catalogs])
 
 
 # Show all catalogs
 @app.route('/')
 @app.route('/catalog/')
 def showcatalogs():
-    catalogs = session.query(Catalog).order_by(asc(Catalog.name))
-    items = session.query(CatalogItem).order_by(CatalogItem.id.desc()).limit(5).all()
+    catalogs = session.query(
+        Catalog).order_by(asc(Catalog.name))
+    items = session.query(
+        CatalogItem).order_by(CatalogItem.id.desc()).limit(5).all()
     some_list = []
     for item in items:
-        #print item.catalog_id
-        catalog_name = session.query(Catalog).filter_by(id=item.catalog_id).first()
+        catalog_name = session.query(
+            Catalog).filter_by(id=item.catalog_id).first()
         some_list.append((item, catalog_name))
-        #print catalog_name.name
     if 'username' not in login_session:
-        return render_template('publiccatalogs.html', catalogs=catalogs,some_list=some_list)
+        return render_template(
+            'publiccatalogs.html', catalogs=catalogs, some_list=some_list)
     else:
-        return render_template('catalogs.html', catalogs=catalogs,some_list=some_list)
+        return render_template(
+            'catalogs.html', catalogs=catalogs, some_list=some_list)
 
 # Create a new catalog
 
@@ -259,12 +253,12 @@ def editcatalog(catalog_id):
     if request.method == 'POST':
         if request.form['name']:
             editedcatalog.name = request.form['name']
-            #session.editedcatalog.update()
             session.commit()
             flash('catalog Successfully Edited %s' % editedcatalog.name)
             return redirect(url_for('showcatalogs', catalogs=catalogs))
     else:
-        return render_template('editcatalog.html', catalog=editedcatalog, catalogs=catalogs)
+        return render_template(
+            'editcatalog.html', catalog=editedcatalog, catalogs=catalogs)
 
 
 # Delete a catalog
@@ -275,20 +269,21 @@ def deletecatalog(catalog_id):
         return redirect('/login')
     catalogToDelete = session.query(
         Catalog).filter_by(id=catalog_id).one()
-    itemsToDelete = session.query(CatalogItem).filter_by(catalog_id=catalog_id).all()
-    
+    itemsToDelete = session.query(
+        CatalogItem).filter_by(catalog_id=catalog_id).all()
     if request.method == 'POST':
         session.delete(catalogToDelete)
         for item in itemsToDelete:
             session.delete(session.query(
-            CatalogItem).filter_by(catalog_id=item.catalog_id).first())
+                CatalogItem).filter_by(catalog_id=item.catalog_id).first())
             print item.name
-        #itemsToDelete.remove(4)
         flash('%s Successfully Deleted' % catalogToDelete.name)
         session.commit()
-        return redirect(url_for('showcatalogs', catalog_id=catalog_id, catalogs=catalogs))
+        return redirect(url_for(
+            'showcatalogs', catalog_id=catalog_id, catalogs=catalogs))
     else:
-        return render_template('deleteCatalog.html', catalog=catalogToDelete, catalogs=catalogs)
+        return render_template(
+            'deleteCatalog.html', catalog=catalogToDelete, catalogs=catalogs)
 
 # Show a menu items
 
@@ -298,37 +293,51 @@ def deletecatalog(catalog_id):
 def showCatalogMenu(catalog_id):
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
-    count =  session.query(CatalogItem).filter_by(catalog_id=catalog_id).count()
-    creator=getUserInfo(catalog.user_id)
-    #print creator.name
+    count =  session.query(
+        CatalogItem).filter_by(catalog_id=catalog_id).count()
+    creator = getUserInfo(catalog.user_id)
     items = session.query(CatalogItem).filter_by(
         catalog_id=catalog_id).all()
     if 'username' not in login_session or creator.id != login_session['user_id']:
-        return render_template('publicmenu.html',items=items, creator=creator,catalog=catalog, catalogs=catalogs,count=count)
+        return render_template(
+            'publicmenu.html', items=items, creator=creator, catalog=catalog, catalogs=catalogs, count=count)
     else:
-        return render_template('menu.html',items=items, creator=creator,catalog=catalog, catalogs=catalogs,count=count)
+        return render_template(
+            'menu.html', items=items, creator=creator, catalog=catalog, catalogs=catalogs, count=count)
 
 
 # Create a new catalog item
-@app.route('/catalog/<int:catalog_id>/catalogMenu/new/', methods=['GET', 'POST'])
+
+
+@app.route('/catalog/<int:catalog_id>/catalogMenu/new/', methods=[
+    'GET', 'POST'])
 def newcatalogMenuItem(catalog_id):
     if 'username' not in login_session:
         return redirect('/login')
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
     if request.method == 'POST':
-        newItem = CatalogItem(name=request.form['name'], description=request.form['description'], price=request.form[
-                           'price'], catalog_id=catalog_id, user_id=catalog.user_id)
+        newItem = CatalogItem(
+            name=request.form[
+                'name'], description=request.form[
+                    'description'], price=request.form[
+                           'price'], catalog_id=catalog_id, user_id=catalog.user_id
+                           )
         session.add(newItem)
         session.commit()
         flash('New catalog %s Item Successfully Created' % (newItem.name))
-        return redirect(url_for('showcatalogs', catalog_id=catalog_id, catalogs=catalogs))
+        return redirect(url_for(
+            'showcatalogs', catalog_id=catalog_id, catalogs=catalogs))
     else:
-        return render_template('newcatalogmenuitem.html', catalog_id=catalog_id, catalogs=catalogs)
+        return render_template(
+            'newcatalogmenuitem.html', catalog_id=catalog_id, catalogs=catalogs
+            )
 
 # Edit a catalog item
 
-@app.route('/catalog/<int:catalog_id>/catalogMenu/<int:catalog_menu_id>/edit', methods=['GET', 'POST'])
+
+@app.route('/catalog/<int:catalog_id>/catalogMenu/<int:catalog_menu_id>/edit', methods=[
+    'GET', 'POST'])
 def editMenuItem(catalog_id, catalog_menu_id):
     if 'username' not in login_session:
         return redirect('/login')
@@ -345,42 +354,51 @@ def editMenuItem(catalog_id, catalog_menu_id):
         session.add(editedItem)
         session.commit()
         flash('Menu Item Successfully Edited')
-        return redirect(url_for('showCatalogMenu', catalog_id=catalog_id, catalogs=catalogs))
+        return redirect(url_for(
+            'showCatalogMenu', catalog_id=catalog_id, catalogs=catalogs))
     else:
-        return render_template('editmenuitem.html', catalog_id=catalog_id, menu_id=catalog_menu_id, item=editedItem, catalogs=catalogs)
+        return render_template(
+            'editmenuitem.html', catalog_id=catalog_id, menu_id=catalog_menu_id, item=editedItem, catalogs=catalogs)
 
 
 # Delete a menu item
-@app.route('/catalog/<int:catalog_id>/catalogMenu/<int:catalog_menu_id>/delete', methods=['GET', 'POST'])
+
+
+@app.route('/catalog/<int:catalog_id>/catalogMenu/<int:catalog_menu_id>/delete', methods=[
+    'GET', 'POST'])
 def deleteMenuItem(catalog_id, catalog_menu_id):
     if 'username' not in login_session:
         return redirect('/login')
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
-    itemToDelete = session.query(CatalogItem).filter_by(id=catalog_menu_id).one()
+    itemToDelete = session.query(
+        CatalogItem).filter_by(id=catalog_menu_id).one()
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
         flash('Menu Item Successfully Deleted')
-        return redirect(url_for('showCatalogMenu', catalog_id=catalog_id, catalogs=catalogs))
+        return redirect(url_for(
+            'showCatalogMenu', catalog_id=catalog_id, catalogs=catalogs))
     else:
-        return render_template('deleteMenuItem.html', item=itemToDelete, catalogs=catalogs)
-
-
+        return render_template(
+            'deleteMenuItem.html', item=itemToDelete, catalogs=catalogs)
 
 # show details of menu item
+
+
 @app.route('/catalog/catalogMenu/<int:item_id>')
 def showDetails(item_id):
     item = session.query(CatalogItem).filter_by(id=item_id).one()
     catalog = session.query(Catalog).filter_by(id=item.catalog_id).one()
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
-    creator=getUserInfo(catalog.user_id)
-    if 'username' not in login_session or creator.id != login_session['user_id']:
-        return render_template('publicshowDetails.html', item=item, catalogs =catalogs)
+    creator = getUserInfo(catalog.user_id)
+    if 'username' not in login_session or creator.id != login_session[
+            'user_id']:
+        return render_template(
+            'publicshowDetails.html', item=item, catalogs=catalogs)
     else:
-        return render_template('showDetails.html', item=item, catalogs =catalogs)
- 
-
+        return render_template(
+            'showDetails.html', item=item, catalogs=catalogs)
 
 # Delete a catalog item
 

@@ -51,17 +51,12 @@
 				<div class="col-md-3 " style="background-color:#ffa02a47">
 						<div class="col-md-12 ">
 								<h3>Catalogs: </h3><hr>
-							</div>
-							
+						</div>							
 			{% for catalogs in catalogs %}
 				<a href = "{{url_for('showCatalogMenu', catalog_id = catalogs.id)}}">
-					
-						
 							<div class="col-md-12 ">
 								<h3>{{catalogs.name}}</h3>
 							</div>
-						
-
 				</a>
 			{% endfor %}
 			</div>
@@ -72,14 +67,10 @@
 					<h3>{{catalog.name}}({{count}})</h3><hr>
 			</div>
 			{% for item in items %}
-				<a href = "{{url_for('showDetails',item_id = item.id)}}">
-				
-						
+				<a href = "{{url_for('showDetails',item_id = item.id)}}">				
 							<div class="col-md-12 ">
 								<h3>{{item.name}}</h3>
 							</div>
-						
-		
 				</a>
 			{% endfor %}
 			{% endif %}
