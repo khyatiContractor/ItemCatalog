@@ -4,13 +4,13 @@ It is a item catalog. Where All the catagory and sub items are displayed.
 CRUD operations are implemented.
 
 # Technology
-Python
-Flask
-Vagrant
-SQLAlchemy
-HTML
-CSS
-BootStrap
+  Python
+  Flask
+  Vagrant
+  SQLAlchemy
+  HTML
+  CSS
+  BootStrap
 
 # Functionality
 API Endpoints : The project implements a JSON endpoint that serves the same information as displayed in the HTML endpoints for an arbitrary item in the catalog.
@@ -28,15 +28,19 @@ Go to Vagrant Folder.
 If you need to bring the virtual machine online:
 
   vagrant up
+  
 Then log into it with
 
   vagrant ssh
+  
 Once machine is up and running
 
   cd /vagrant/ItemCatalog
+  
 To set up database and populate it
 
   python CatalogDB.py
+  
 
 # Database :
 User : Includes information about User
