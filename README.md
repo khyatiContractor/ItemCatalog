@@ -4,13 +4,14 @@ It is a item catalog. Where All the catagory and sub items are displayed.
 CRUD operations are implemented.
 
 # Technology
-  Python
-  Flask
-  Vagrant
-  SQLAlchemy
-  HTML
-  CSS
-  BootStrap
+    Python
+    Flask
+    Vagrant
+    SQLAlchemy
+    HTML
+    CSS
+    BootStrap
+  
 
 # Functionality
 API Endpoints : The project implements a JSON endpoint that serves the same information as displayed in the HTML endpoints for an arbitrary item in the catalog.
@@ -21,25 +22,25 @@ CRUD: Delete : Website does include a function to delete a current record.
 Authentication & Authorizatio : Create, delete and update operations do consider authorization status prior to execution. Page implements a third-party authentication & authorization service (like Google Accounts ) instead of implementing its own authentication & authorization spec.
 
 
-# Access and test application by visiting http://localhost:8000 locally
+## Access and test application by visiting http://localhost:8000 locally
 
 # To Run
 Go to Vagrant Folder.
 If you need to bring the virtual machine online:
 
-  vagrant up
+    vagrant up
   
 Then log into it with
 
-  vagrant ssh
+    vagrant ssh
   
 Once machine is up and running
 
-  cd /vagrant/ItemCatalog
+    cd /vagrant/ItemCatalog
   
 To set up database and populate it
 
-  python CatalogDB.py
+    python CatalogDB.py
   
 
 # Database :
