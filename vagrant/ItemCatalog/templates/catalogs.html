@@ -1,25 +1,17 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
-	<div class="row top-menu">
-		<div class="col-md-10"></div>
-		<div class="col-md-2 text-right">
-					</div>
-	</div>
-	<div class="row divider blue">
-		<div class="col-md-12"></div>
-	</div>
-	<div class="row banner main">
-		<div class="col-md-1"></div>
-		<div class="col-md-11 padding-none">
-			<h1>Catagories</h1>
+	
+	<div class="row banner main" style="background-color:#e6e1da47; margin:0 !important">	
+		<div class="col-md-12 padding-none">
+			<h1 style="margin:50px 0 30px">Catagories</h1>
 		</div>
+		
 	</div>
 
 <div class = 'flash'>
 	{% with messages = get_flashed_messages() %}
       {% if messages %}
-          
         <ul>
         {% for message in messages %}
             <li> <strong> {{ message }} </strong> </li>
@@ -28,46 +20,39 @@
         {% endif %}
     {% endwith %}
 
-</div>
-	
-	<div class="row padding-top padding-bottom">
-		<div class="col-md-1"></div>
-		<div class="col-md-10 padding-none">
-			<a href="{{url_for('newcatalog')}}">
-				<button class="btn btn-default" id="new-catalog">
-					<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>Add New catalogs
-				</button>
-			</a>
-		</div>
-		<div class="col-md-1"></div>
-	</div>
-	
-	<div class="row">
-			<div class="col-md-6">
-	{% for catalogs in catalogs %}
-		<a href = "{{url_for('showCatalogMenu', catalog_id = catalogs.id)}}">
-			
-				
-					<div class="col-md-12 catalogs-list">
-						<h3>{{catalogs.name}}</h3>
-					</div>
-				
-			
+</div>	
+<div class="row">
+<div class="col-md-12 padding-none" style="margin: 20px 0">
+		<a href="{{url_for('newcatalog')}}" style="float:right; padding: 0 5px;">
+			<button class="btn btn-default" id="new-catalog">
+				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Add New catalog
+			</button>
 		</a>
-	{% endfor %}
-</div>
-<div class="col-md-6">
-		{% for item in some_list %}
-				<a href = "{{url_for('showDetails',item_id = item[0].id)}}">
-				
-						<div class="col-md-12 ">
-								<h3>{{item[0].name}}</h3><i>({{item[1].name}})</i>
-							</div>
-						
-		
-				</a>
-			{% endfor %}
-			
 	</div>
 </div>
+	<div class="row">
+			<div class="col-md-3" style="background-color:#ffa02a47">
+					<div class="col-md-12 catalogs-list">
+							<h3>Catalogs: </h3><hr>
+					</div>
+				{% for catalogs in catalogs %}
+					<a href = "{{url_for('showCatalogMenu', catalog_id = catalogs.id)}}">							
+							<div class="col-md-12 catalogs-list">
+									<h3>{{catalogs.name}}</h3>
+							</div>
+					</a>
+				{% endfor %}
+			</div>
+
+			<div class="col-md-9">
+				<h3>Latest Added Items</h3><hr>
+					{% for item in some_list %}
+							<a href = "{{url_for('showDetails',item_id = item[0].id)}}">
+									<div class="col-md-12 ">
+											<h3>{{item[0].name}} <i style="color:gray">({{item[1].name}})</i> </h3>
+									</div>
+							</a>
+						{% endfor %}
+			</div>
+		</div>
 {% endblock %}
