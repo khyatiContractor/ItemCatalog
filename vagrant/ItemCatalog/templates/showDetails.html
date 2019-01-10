@@ -1,9 +1,31 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
+	<div class="row divider green">
+		<div class="col-md-12"></div>
+	</div>
 	
-    
+
+<div class = 'flash'>
+		      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+</div>
+	 
     <div>
         Details : {{details}}
+        <br>
+        Price : {{item.price}}
+        <br><br>
+        <a href='{{url_for('editMenuItem', catalog_id = item.catalog_id, catalog_menu_id=item.id ) }}'>Edit</a> | 
+		<a href='{{url_for('deleteMenuItem', catalog_id = item.catalog_id, catalog_menu_id=item.id ) }}'>Delete</a> 
     </div>
     {% endblock %}	
