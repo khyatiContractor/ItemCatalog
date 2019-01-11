@@ -22,7 +22,21 @@ CRUD: Delete : Website does include a function to delete a current record.
 Authentication & Authorizatio : Create, delete and update operations do consider authorization status prior to execution. Page implements a third-party authentication & authorization service (like Google Accounts ) instead of implementing its own authentication & authorization spec.
 
 
-## Access and test application by visiting http://localhost:8000 locally
+## Access and test application by visiting http://localhost:5000 locally
+
+VirtualBox
+VirtualBox is the software that actually runs the VM. You can download it from virtualbox.org. Install the platform package for your operating system. You do not need the extension pack or the SDK. You do not need to launch VirtualBox after installing it.
+
+Vagrant
+Vagrant is the software that configures the VM and lets you share files between your host computer and the VM's filesystem. You can download it from vagrantup.com. Install the version for your operating system.
+
+Fetch the Source Code and VM Configuration
+
+Fork the starter repo Log into your personal Github account, and fork the [fullstack-nanodegree-vm](https://github.com/udacity/fullstack-nanodegree-vm).
+
+Clone the remote to your local machine From the terminal, run the following command (be sure to replace with your GitHub username): git clone http://github.com//fullstack-nanodegree-vm 
+
+This will give you a directory named fullstack that is a clone of your remote fullstack-nanodegree-vm repository.
 
 # To Run
 Go to Vagrant Folder.
