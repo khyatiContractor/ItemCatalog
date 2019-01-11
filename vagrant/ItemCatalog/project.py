@@ -143,8 +143,11 @@ def getUserInfo(user_id):
 
 
 def getUserID(email):
-    user = session.query(User).filter_by(email=email).one()
-    return user.id
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
 
 
 # DISCONNECT - Revoke a current user's token and reset their login_session
@@ -406,4 +409,4 @@ def showDetails(item_id):
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=5000)
