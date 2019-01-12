@@ -126,7 +126,7 @@ def gconnect():
     return output
 
 # User Helper Functions
-
+b
 
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
@@ -315,7 +315,8 @@ def showCatalogMenu(catalog_id):
 @app.route('/catalog/<int:catalog_id>/catalogMenu/new/', methods=[
     'GET', 'POST'])
 def newcatalogMenuItem(catalog_id):
-    if 'username' not in login_session:
+    if 'username' not in login_session or creator.id != login_session[
+            'user_id']:
         return redirect('/login')
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
@@ -342,7 +343,8 @@ def newcatalogMenuItem(catalog_id):
 @app.route('/catalog/<int:catalog_id>/catalogMenu/<int:catalog_menu_id>/edit', methods=[
     'GET', 'POST'])
 def editMenuItem(catalog_id, catalog_menu_id):
-    if 'username' not in login_session:
+    if 'username' not in login_session or creator.id != login_session[
+            'user_id']:
         return redirect('/login')
     editedItem = session.query(CatalogItem).filter_by(id=catalog_menu_id).one()
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
@@ -370,7 +372,8 @@ def editMenuItem(catalog_id, catalog_menu_id):
 @app.route('/catalog/<int:catalog_id>/catalogMenu/<int:catalog_menu_id>/delete', methods=[
     'GET', 'POST'])
 def deleteMenuItem(catalog_id, catalog_menu_id):
-    if 'username' not in login_session:
+    if 'username' not in login_session or creator.id != login_session[
+            'user_id']:
         return redirect('/login')
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
