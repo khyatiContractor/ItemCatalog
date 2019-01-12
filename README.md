@@ -55,6 +55,12 @@ Once machine is up and running
 To set up database and populate it
 
     python CatalogDB.py
+ 
+To run project
+
+    python project.py
+    
+    visit : http://localhost:5000 in your browser
   
 
 # Database :
