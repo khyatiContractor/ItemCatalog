@@ -126,7 +126,7 @@ def gconnect():
     return output
 
 # User Helper Functions
-b
+
 
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
