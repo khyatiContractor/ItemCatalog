@@ -126,7 +126,7 @@ def gconnect():
     return output
 
 # User Helper Functions
-b
+
 
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
@@ -249,7 +249,8 @@ def newcatalog():
 @app.route('/catalog/<int:catalog_id>/edit/', methods=['GET', 'POST'])
 def editcatalog(catalog_id):
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
-    if 'username' not in login_session:
+    if 'username' not in login_session or creator.id != login_session[
+            'user_id']:
         return redirect('/login')
     editedcatalog = session.query(
         Catalog).filter_by(id=catalog_id).one()
@@ -268,7 +269,8 @@ def editcatalog(catalog_id):
 @app.route('/catalog/<int:catalog_id>/delete/', methods=['GET', 'POST'])
 def deletecatalog(catalog_id):
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
-    if 'username' not in login_session:
+    if 'username' not in login_session or creator.id != login_session[
+            'user_id']:
         return redirect('/login')
     catalogToDelete = session.query(
         Catalog).filter_by(id=catalog_id).one()
