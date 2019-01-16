@@ -20,7 +20,7 @@ APPLICATION_NAME = "catalog catalog Application"
 
 # Connect to Database and create database session
 engine = create_engine('sqlite:///catalogcatalogwithusers.db',
-                        connect_args={'check_same_thread': False})
+                       connect_args={'check_same_thread': False})
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -89,8 +89,9 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(
+            json.dumps('Current user is already connected.'),
+            200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -120,7 +121,8 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 200px; height: 200px;border-radius: 100px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += """ " style = "width: 200px; height: 200px; border-radius:
+    100px;-webkit-border-radius: 150px;-moz-border-radius: 150px;> """
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
@@ -249,6 +251,8 @@ def newcatalog():
 @app.route('/catalog/<int:catalog_id>/edit/', methods=['GET', 'POST'])
 def editcatalog(catalog_id):
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
+    catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+    creator = getUserInfo(catalog.user_id)
     if 'username' not in login_session or creator.id != login_session[
             'user_id']:
         return redirect('/login')
@@ -269,6 +273,8 @@ def editcatalog(catalog_id):
 @app.route('/catalog/<int:catalog_id>/delete/', methods=['GET', 'POST'])
 def deletecatalog(catalog_id):
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
+    catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+    creator = getUserInfo(catalog.user_id)
     if 'username' not in login_session or creator.id != login_session[
             'user_id']:
         return redirect('/login')
@@ -298,17 +304,21 @@ def deletecatalog(catalog_id):
 def showCatalogMenu(catalog_id):
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
-    count =  session.query(
+    count = session.query(
         CatalogItem).filter_by(catalog_id=catalog_id).count()
     creator = getUserInfo(catalog.user_id)
     items = session.query(CatalogItem).filter_by(
         catalog_id=catalog_id).all()
-    if 'username' not in login_session or creator.id != login_session['user_id']:
+    if 'username' not in login_session or creator.id != login_session[
+            'user_id']:
         return render_template(
-            'publicmenu.html', items=items, creator=creator, catalog=catalog, catalogs=catalogs, count=count)
+                'publicmenu.html', items=items,
+                creator=creator, catalog=catalog,
+                catalogs=catalogs, count=count)
     else:
         return render_template(
-            'menu.html', items=items, creator=creator, catalog=catalog, catalogs=catalogs, count=count)
+            'menu.html', items=items, creator=creator,
+            catalog=catalog, catalogs=catalogs, count=count)
 
 
 # Create a new catalog item
@@ -317,6 +327,8 @@ def showCatalogMenu(catalog_id):
 @app.route('/catalog/<int:catalog_id>/catalogMenu/new/', methods=[
     'GET', 'POST'])
 def newcatalogMenuItem(catalog_id):
+    catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+    creator = getUserInfo(catalog.user_id)
     if 'username' not in login_session or creator.id != login_session[
             'user_id']:
         return redirect('/login')
@@ -327,8 +339,8 @@ def newcatalogMenuItem(catalog_id):
             name=request.form[
                 'name'], description=request.form[
                     'description'], price=request.form[
-                           'price'], catalog_id=catalog_id, user_id=catalog.user_id
-                           )
+                           'price'], catalog_id=catalog_id,
+            user_id=catalog.user_id)
         session.add(newItem)
         session.commit()
         flash('New catalog %s Item Successfully Created' % (newItem.name))
@@ -342,9 +354,13 @@ def newcatalogMenuItem(catalog_id):
 # Edit a catalog item
 
 
-@app.route('/catalog/<int:catalog_id>/catalogMenu/<int:catalog_menu_id>/edit', methods=[
+@app.route("""/catalog/<int:catalog_id>
+/catalogMenu/<int:catalog_menu_id>
+/edit""", methods=[
     'GET', 'POST'])
 def editMenuItem(catalog_id, catalog_menu_id):
+    catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+    creator = getUserInfo(catalog.user_id)
     if 'username' not in login_session or creator.id != login_session[
             'user_id']:
         return redirect('/login')
@@ -365,15 +381,20 @@ def editMenuItem(catalog_id, catalog_menu_id):
             'showCatalogMenu', catalog_id=catalog_id, catalogs=catalogs))
     else:
         return render_template(
-            'editmenuitem.html', catalog_id=catalog_id, menu_id=catalog_menu_id, item=editedItem, catalogs=catalogs)
+            'editmenuitem.html', catalog_id=catalog_id,
+            menu_id=catalog_menu_id, item=editedItem,
+            catalogs=catalogs)
 
 
 # Delete a menu item
 
 
-@app.route('/catalog/<int:catalog_id>/catalogMenu/<int:catalog_menu_id>/delete', methods=[
+@app.route("""/catalog/<int:catalog_id>
+                /catalogMenu/<int:catalog_menu_id>/delete""", methods=[
     'GET', 'POST'])
 def deleteMenuItem(catalog_id, catalog_menu_id):
+    catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+    creator = getUserInfo(catalog.user_id)
     if 'username' not in login_session or creator.id != login_session[
             'user_id']:
         return redirect('/login')
